@@ -6,7 +6,7 @@
 struct FieldInfo {
     unsigned int item_size;
     int (*comparator)(void*, void*);
-    void (*print)(void*);
+    int (*to_string)(void*, char*, size_t);
 };
 
 typedef struct FieldInfo FieldInfo;

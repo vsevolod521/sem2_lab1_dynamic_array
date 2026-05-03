@@ -18,3 +18,5 @@ void* change_sign(void*);
 int is_positive(void*);
 
 int is_double_digits(void*);
+
+int double_to_string(void* item, char* buffer, size_t size);

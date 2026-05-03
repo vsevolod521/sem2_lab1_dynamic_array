@@ -23,3 +23,5 @@ void* get_sqr_complex(void*);
 
 int is_real_positive(void*);
 int is_complex_in_unit_circle(void*);
+
+int complex_to_string(void* item, char* buffer, size_t size);

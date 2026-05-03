@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <math.h>
-
+#include <stdio.h>
 #include "FieldInfo.h"
+#include "functions_double.h"
 
 FieldInfo* double_field_info = NULL;
 
@@ -28,7 +29,7 @@ FieldInfo* get_double_field_info() {
         double_field_info = (FieldInfo*)malloc(sizeof(FieldInfo));
         double_field_info->item_size = sizeof(double);
         double_field_info->comparator = compare_double;
-        double_field_info->print = print_double;
+        double_field_info->to_string = double_to_string;
     }
     return double_field_info;
 }
@@ -75,3 +76,13 @@ int is_double_digits(void* ptr) {
 
     return 10.0 <= x && x <= 99;
 }
+
+int double_to_string(void* item, char* buffer, size_t size) {
+    if (!item || (buffer == NULL && size != 0)) {
+        return -1;
+    }
+    double val = *(const double*)item;
+    int chars_written = snprintf(buffer, size, "%6.2f", val);
+    return chars_written;
+}
+

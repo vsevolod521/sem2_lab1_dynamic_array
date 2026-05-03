@@ -87,7 +87,7 @@ int main() {
     printf("\nИсходный массив: ");
     print_array(array);
 
-    sort(array);
+    //sort(array);
     printf("Отсортированный массив: ");
     print_array(array);
 

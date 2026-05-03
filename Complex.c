@@ -23,7 +23,7 @@ FieldInfo* get_complex_field_info() {
         complex_field_info = (FieldInfo*)malloc(sizeof(FieldInfo));
         complex_field_info->item_size = sizeof(Complex);
         complex_field_info->comparator = compare_complex;
-        complex_field_info->print = print_complex;
+        complex_field_info->to_string = complex_to_string;
     }
     return complex_field_info;
 }
@@ -62,4 +62,13 @@ int is_complex_in_unit_circle(void* p1) {
     Complex* num = (Complex*)p1;
     double mod_sq = num->Re * num->Re + num->Im * num->Im;
     return (mod_sq < 1.0) ? 1 : 0;
+}
+
+int complex_to_string(void* item, char* buffer, size_t size) {
+    if (!item || (buffer == NULL && size != 0)) {
+        return -1;
+    }
+    const Complex* num = (const Complex*)item;
+    int chars_written = snprintf(buffer, size, "(%6.2f + %6.2fi)", num->Re, num->Im);
+    return chars_written;
 }

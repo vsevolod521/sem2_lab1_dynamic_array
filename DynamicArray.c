@@ -50,38 +50,7 @@ void push_back(DynamicArray* array, void* item) {
     }
 }
 
-void print_array(DynamicArray* array) {
-    if (!array || !array->data) return;
 
-    for (int i = 0; i < array->size; i++) {
-        void* elem_ptr = get_element_ptr(array, i);
-        if (elem_ptr) {
-            array->field_info->print(elem_ptr); 
-            printf(" ");
-        }
-    }
-    printf("\n");
-}
-
-/*
-void sort(DynamicArray* array) {
-    for (int i = 0; i < array->size; i++) {
-        int min_j = i;
-
-        for (int j = i + 1; j < array->size; j++) {
-            if (array->field_info->comparator(get_element_ptr(array, j), get_element_ptr(array, min_j) < 0)) {
-                min_j = j;
-            }
-        
-
-        void* p1 = get_element_ptr(array,i);
-        void* p2 = get_element_ptr(array,i);
-
-        p = get_element_ptr(array,min_j);
-        array->data[min_j] = p;
-    }
-}
-*/
 
 DynamicArray* map(DynamicArray* array, void* (*f)(void*)) {
     if (!array || !f) return NULL;
@@ -144,4 +113,42 @@ DynamicArray* concatenate(DynamicArray* left, DynamicArray* right) {
     }
 
     return result;
+}
+
+
+
+void print_array(DynamicArray* array) {
+    if (!array || !array->data) return;
+
+    for (int i = 0; i < array->size; i++) {
+        void* elem_ptr = get_element_ptr(array, i);
+        if (elem_ptr) {
+            int required_len = array->field_info->to_string(elem_ptr, NULL, 0);
+
+            if (required_len < 0) {
+                printf("ошибка форматирования элемента ");
+                continue;
+            }
+
+            char* buffer = malloc((required_len + 1) * sizeof(char));
+            if (!buffer) {
+                fprintf(stderr, "ошибка выделения памяти для вывода элемента %d.\n", i);
+                printf("ошибка выделения памяти ");
+                continue;
+            }
+
+            int final_len = array->field_info->to_string(elem_ptr, buffer, required_len + 1);
+
+            if (final_len >= 0 && final_len <= required_len) {
+                printf("%s ", buffer);
+            } else {
+                printf("ошибка заполнения буфера ");
+            }
+
+            free(buffer);
+        } else {
+             printf("ошибка доступа к элементу по индексу");
+        }
+    }
+    printf("\n");
 }
