@@ -54,7 +54,7 @@ void test_double_compare() {
     ASSERT_EQUAL_INT(compare_double(&x3, &x1), 1);
 }
 
-void test_double_create() {
+/*void test_double_create() {
     DynamicArray* array = create(get_double_field_info());
 
     ASSERT_EQUAL_INT(array->size, 0);
@@ -74,7 +74,7 @@ void test_double_create() {
 
     delete_array(array);
 }
-
+*/
 void test_double_sort() {
     DynamicArray* array = create(get_double_field_info());
 

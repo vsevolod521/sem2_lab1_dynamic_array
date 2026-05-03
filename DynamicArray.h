@@ -6,15 +6,15 @@
 #include "FieldInfo.h"
 
 struct DynamicArray {
-    int capacity;
-    int size;
-    void** data;
-    FieldInfo* field_info;
+    int size;            
+    void* data;            
+    FieldInfo* field_info; 
 };
 
 typedef struct DynamicArray DynamicArray;
 
 DynamicArray* create(FieldInfo*);
+void* get_element_ptr(DynamicArray* array, int index);
 void delete_array(DynamicArray*);
 void push_back(DynamicArray*, void*);
 void print_array(DynamicArray*);

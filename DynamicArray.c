@@ -7,7 +7,6 @@
 DynamicArray* create(FieldInfo* field_info) {
     DynamicArray* array = (DynamicArray*)malloc(sizeof(DynamicArray));
 
-    array->capacity = 0;
     array->size = 0;
     array->field_info = field_info;
     array->data = NULL;
@@ -15,113 +14,134 @@ DynamicArray* create(FieldInfo* field_info) {
     return array;
 }
 
-void delete_array(DynamicArray* array) {
-    if (array != NULL) {
-        if (array->data != NULL) {
-            for (int i = 0; i < array->size; i++)
-                free(array->data[i]);
+void* get_element_ptr(DynamicArray* array, int index) {
+    if (!array || index < 0 || index >= array->size) return NULL;
+    return (char*)array->data + index * array->field_info->item_size;
+}
 
-            free(array->data);
-        }
-        free(array);
+void delete_array(DynamicArray* array) {
+    if (array) {
+        free(array->data);
+        free(array);      
     }
 }
 
 void push_back(DynamicArray* array, void* item) {
+    if (!array || !item) return;
 
-    if (array == NULL)
+    int new_size = array->size + 1;
+    size_t new_data_size = (size_t)new_size * array->field_info->item_size;
+
+    void* new_data = realloc(array->data, new_data_size);
+    if (!new_data) {
         return;
-
-    if (array->capacity == 0) {
-        array->capacity = 1;
-        array->data = (void**)malloc(sizeof(void*) * array->capacity);
     }
 
-    if (array->size == array->capacity) {
-        array->capacity *= 2;
-        void** old_data = array->data;
-        array->data = (void**)malloc(sizeof(void*) * array->capacity);
-        if (old_data != NULL) { 
-            for (int i = 0; i < array->size; i++)
-                array->data[i] = old_data[i];
+    array->data = new_data;
+    array->size = new_size;
+
+    void* dest_ptr = get_element_ptr(array, array->size - 1);
+    if (dest_ptr) { 
+        char* source = (char*)item;
+        char* destination = (char*)dest_ptr;
+        for (unsigned int i = 0; i < array->field_info->item_size; i++) {
+            destination[i] = source[i];
         }
-
-        free(old_data);
     }
-
-    array->data[array->size] = malloc(array->field_info->item_size);
-
-    char* destination = (char*)array->data[array->size];
-    char* source = (char*)item;
-
-    for (unsigned int i = 0; i < array->field_info->item_size; i++) {
-        *destination = *source;
-        destination++;
-        source++;
-    }
-
-    array->size++;
 }
 
 void print_array(DynamicArray* array) {
+    if (!array || !array->data) return;
+
     for (int i = 0; i < array->size; i++) {
-        array->field_info->print(array->data[i]);
-        printf(" ");
+        void* elem_ptr = get_element_ptr(array, i);
+        if (elem_ptr) {
+            array->field_info->print(elem_ptr); 
+            printf(" ");
+        }
     }
     printf("\n");
 }
 
+/*
 void sort(DynamicArray* array) {
     for (int i = 0; i < array->size; i++) {
         int min_j = i;
 
         for (int j = i + 1; j < array->size; j++) {
-            if (array->field_info->comparator(array->data[j], array->data[min_j]) < 0)
+            if (array->field_info->comparator(get_element_ptr(array, j), get_element_ptr(array, min_j) < 0)) {
                 min_j = j;
-        }
+            }
+        
 
-        void* p = array->data[i];
-        array->data[i] = array->data[min_j];
+        void* p1 = get_element_ptr(array,i);
+        void* p2 = get_element_ptr(array,i);
+
+        p = get_element_ptr(array,min_j);
         array->data[min_j] = p;
     }
 }
+*/
 
 DynamicArray* map(DynamicArray* array, void* (*f)(void*)) {
+    if (!array || !f) return NULL;
 
     DynamicArray* result = create(array->field_info);
+    if (!result) return NULL;
 
-    for (int i = 0; i < array->size; i++)
-        push_back(result, f(array->data[i]));
+    for (int i = 0; i < array->size; i++) {
+        void* elem_ptr = get_element_ptr(array, i);
+        if (elem_ptr) {
+            void* mapped_item = f(elem_ptr); 
+            if (mapped_item) {
+                push_back(result, mapped_item);
+                free(mapped_item); 
+            }
+        }
+    }
 
     return result;
 }
 
 DynamicArray* where(DynamicArray* array, int (*f)(void*)) {
+    if (!array || !f) return NULL;
 
     DynamicArray* result = create(array->field_info);
+    if (!result) return NULL;
 
-    for (int i = 0; i < array->size; i++)
-        if (f(array->data[i]))
-            push_back(result, array->data[i]);
+    for (int i = 0; i < array->size; i++) {
+        void* elem_ptr = get_element_ptr(array, i);
+        if (elem_ptr && f(elem_ptr)) { 
+            push_back(result, elem_ptr); 
+        }
+    }
 
     return result;
 }
 
-    DynamicArray* concatenate(DynamicArray* left, DynamicArray* right) {
-        if (!left || !right) 
-            return NULL; 
-        
+DynamicArray* concatenate(DynamicArray* left, DynamicArray* right) {
+    if (!left || !right) return NULL;
 
-        if (left->field_info != right->field_info)
-            return NULL;
+    if (left->field_info != right->field_info) return NULL;
 
-        DynamicArray* result = create(left->field_info);
+    DynamicArray* result = create(left->field_info);
+    if (!result) return NULL;
 
-        for (int i = 0; i < left->size; i++)
-            push_back(result, left->data[i]);
 
-        for (int i = 0; i < right->size; i++)
-            push_back(result, right->data[i]);
-
-        return result;
+    for (int i = 0; i < left->size; i++) {
+        void* elem_ptr = get_element_ptr(left, i);
+        if (elem_ptr) {
+            push_back(result, elem_ptr);
+        }
     }
+
+
+    for (int i = 0; i < right->size; i++) {
+        void* elem_ptr = get_element_ptr(right, i);
+        if (elem_ptr) {
+            push_back(result, elem_ptr);
+        }
+    }
+
+    return result;
+}
