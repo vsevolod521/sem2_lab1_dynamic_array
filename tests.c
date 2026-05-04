@@ -49,7 +49,7 @@ void run_tests_double() {
     printf(" Запуск тестов для double \n");
     run_single_test("test_double_compare", test_double_compare);
     run_single_test("test_double_create", test_double_create);
-    //run_single_test("test_double_sort", test_double_sort);
+    run_single_test("test_double_sort", test_double_sort);
     run_single_test("test_double_map", test_double_map);
     run_single_test("test_double_where", test_double_where);
     run_single_test("test_double_concatenate", test_double_concatenate);
@@ -59,7 +59,7 @@ void run_tests_double() {
 void run_tests_complex() {
     printf("Запуск тестов для Complex\n");
     run_single_test("test_complex_create", test_complex_create);
-    //run_single_test("test_complex_sort", test_complex_sort);
+    run_single_test("test_complex_sort", test_complex_sort);
     run_single_test("test_complex_map", test_complex_map);
     run_single_test("test_complex_where", test_complex_where);
     run_single_test("test_complex_concatenate", test_complex_concatenate);
@@ -104,11 +104,12 @@ int test_double_create() {
     return 0;
 }
 
-/*int test_double_sort() {
+int test_double_sort() {
     DynamicArray* array = create(get_double_field_info());
 
     double nums[10] = { 9.1, 5, 1, 6.5, 2, 3, 0.2, 4, 7.8, 8.0 };
     double sorted_nums[10] = { 0.2, 1, 2, 3, 4, 5, 6.5, 7.8, 8.0, 9.1};
+    
 
     for (int i = 0; i < 10; i++)
         push_back(array, &nums[i]);
@@ -122,7 +123,7 @@ int test_double_create() {
 
     delete_array(array);
     return 0;
-}*/
+}
 
 int test_double_map() {
     enum { size = 3 };
@@ -311,7 +312,7 @@ int test_complex_create() {
     return 0;
 }
 
-/*int test_complex_sort() {
+int test_complex_sort() {
     DynamicArray* array = create(get_complex_field_info());
 
     Complex nums[5] = {
@@ -344,7 +345,7 @@ int test_complex_create() {
 
     delete_array(array);
     return 0;
-}*/
+}
 
 int test_complex_map() {
     enum { size = 3 };

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "DynamicArray.h"
 #include "FieldInfo.h"
-
+#include <string.h>
 
 DynamicArray* create(FieldInfo* field_info) {
     DynamicArray* array = (DynamicArray*)malloc(sizeof(DynamicArray));
@@ -151,4 +151,29 @@ void print_array(DynamicArray* array) {
         }
     }
     printf("\n");
+}
+
+void swap_elements(void* elem1, void* elem2, unsigned int item_size) {
+    if (!elem1 || !elem2 || item_size == 0) return;
+    char temp[item_size];
+    memcpy(temp, elem1, item_size);
+    memcpy(elem1, elem2, item_size);
+    memcpy(elem2, temp, item_size);
+}
+
+
+void sort(DynamicArray* array) {
+    if (!array || !array->data || array->size <= 1) return;
+
+    int n = array->size;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - 1 - i; j++) {
+            void* current = get_element_ptr(array, j);
+            void* next = get_element_ptr(array, j + 1);
+
+            if (current && next && array->field_info->comparator(current, next) > 0) {
+                swap_elements(current, next, array->field_info->item_size);
+            }
+        }
+    }
 }

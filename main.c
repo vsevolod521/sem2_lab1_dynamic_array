@@ -9,7 +9,6 @@
 #include "utilits.h"
 
 int main() {
-    run_tests(); 
     setlocale(LC_ALL, "ru_Ru.UTF-8");
 
 
@@ -21,7 +20,7 @@ int main() {
             printf("2. Complex\n");
             printf("Введите 1 или 2 (или 0 для выхода): "); 
             if (scanf("%d", &type_choice) == 1 && (type_choice == 1 || type_choice == 2)) {
-                break; // Ввод корректен
+                break;
             } else if (type_choice == 0) { 
                  printf("Программа завершена\n");
                  return 0;
@@ -94,6 +93,8 @@ int main() {
 
         printf("\nИсходный массив: ");
         print_array(array);
+
+        sort(array);
 
         printf("Отсортированный массив: ");
         print_array(array);

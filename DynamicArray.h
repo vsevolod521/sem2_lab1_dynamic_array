@@ -26,3 +26,7 @@ DynamicArray* map(DynamicArray* array, void*(*f)(void*));
 DynamicArray* where(DynamicArray* array, int (*f)(void*));
 
 DynamicArray* concatenate(DynamicArray* left, DynamicArray* right);
+
+
+void sort(DynamicArray*);
+void swap_elements(void* , void* , unsigned int);
