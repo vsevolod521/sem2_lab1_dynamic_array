@@ -1,0 +1,8 @@
+*.exe
+*.o
+lab1
+lab1.exe 
+.vscode/
+.idea/
+.settings/
+
